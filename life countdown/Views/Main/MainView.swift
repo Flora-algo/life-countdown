@@ -1,12 +1,20 @@
 import SwiftUI
 
 struct MainView: View {
+    @EnvironmentObject var appState: AppState
+    @ObservedObject var viewModel: MainViewModel
+    @State private var showAboutAlert = false
+    @State private var isBreathing = false  // ← 添加这行
+    
     var body: some View {
         ZStack {
-            
             // 背景色
             Color(red: 0.09, green: 0.13, blue: 0.20)
                 .ignoresSafeArea()
+            
+            // 星光背景
+                    StarBackgroundView()
+                        .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 
@@ -16,124 +24,172 @@ struct MainView: View {
                     // 顶部栏：Logo + 标题 + 设置按钮
                     HStack(spacing: 12) {
                         
-                        // Logo
-                        Image("logo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 50, height: 20)
-                        
-                        // 标题
-                        Text("Life Countdown")
-                            .font(.system(size: 16, weight: .light))
-                            .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
+                        // Logo + 标题（可点击）
+                        HStack(spacing: 12) {
+                            Image("logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 50, height: 20)
+                            
+                            Text("Life Countdown")
+                                .font(.system(size: 16, weight: .ultraLight))
+                                .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
+                        }
+                        .onTapGesture {
+                            showAboutAlert = true
+                        }
                         
                         Spacer()
                         
                         // 设置按钮
-                        Image(systemName: "gearshape")
-                            .font(.system(size: 20))
-                            .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
+                        Button(action: {
+                            appState.navigateToAgeInput()
+                        }) {
+                            Image(systemName: "gearshape")
+                                .font(.system(size: 20))
+                                .foregroundColor(Color(red: 50/255, green: 65/255, blue: 80/255))
+                        }
                     }
                     .padding(.horizontal, 20)
-                    .padding(.top, 0)  // 可以是 0，因为已经在安全区域内了
+                    .padding(.top,0)
                     
                     // 倒计时区域
-                    VStack(spacing: 8) {
+                    VStack(spacing: 10) {
                         
-                        // 标题："第 301 个月 剩余"
-                        Text("第 301 个月   剩余")
-                            .font(.system(size: 14, weight: .light))
+                        // 标题
+                        Text(viewModel.titleText)
+                            .font(.system(size: 14, weight: .ultraLight))
                             .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
                         
-                        // 倒计时数字：天、时、分、秒
-                        HStack(spacing: 4) {  // ← 改小间距
+                        // 倒计时数字
+                        HStack(spacing: 4) {
                             
                             // 天
                             VStack(spacing: 4) {
-                                Text("03")
+                                Text(String(format: "%02d", viewModel.remainingDays))
                                     .font(.system(size: 45, weight: .ultraLight))
                                     .foregroundColor(.white)
+                                    .monospacedDigit()  // ← 添加这行
                                 Text("天")
                                     .font(.system(size: 12, weight: .light))
                                     .foregroundColor(Color(red: 63/255, green: 72/255, blue: 88/255))
                             }
                             
-                            // 冒号
                             Text(":")
-                                .font(.system(size: 20, weight: .ultraLight))
-                                .foregroundColor(Color(red: 31/255, green: 52/255, blue: 81/255))
-                                .padding(.bottom, 16)  // 对齐数字，不对齐单位
+                                .font(.system(size: 20, weight: .light))
+                                .foregroundColor(Color(red: 60/255, green: 75/255, blue: 90/255))
+                                .padding(.bottom, 16)
                             
                             // 时
                             VStack(spacing: 4) {
-                                Text("10")
+                                Text(String(format: "%02d", viewModel.remainingHours))
                                     .font(.system(size: 45, weight: .ultraLight))
                                     .foregroundColor(.white)
+                                    .monospacedDigit()  // ← 添加这行
                                 Text("时")
                                     .font(.system(size: 12, weight: .light))
                                     .foregroundColor(Color(red: 63/255, green: 72/255, blue: 88/255))
                             }
                             
-                            // 冒号
                             Text(":")
-                                .font(.system(size: 20, weight: .ultraLight))
-                                .foregroundColor(Color(red: 31/255, green: 52/255, blue: 81/255))
+                                .font(.system(size: 20, weight: .light))
+                                .foregroundColor(Color(red: 60/255, green: 75/255, blue: 90/255))
                                 .padding(.bottom, 16)
                             
                             // 分
                             VStack(spacing: 4) {
-                                Text("59")
+                                Text(String(format: "%02d", viewModel.remainingMinutes))
                                     .font(.system(size: 45, weight: .ultraLight))
                                     .foregroundColor(.white)
+                                    .monospacedDigit()  // ← 添加这行
                                 Text("分")
                                     .font(.system(size: 12, weight: .light))
                                     .foregroundColor(Color(red: 63/255, green: 72/255, blue: 88/255))
                             }
                             
-                            // 冒号
                             Text(":")
-                                .font(.system(size: 20, weight: .ultraLight))
-                                .foregroundColor(Color(red: 31/255, green: 52/255, blue: 81/255))
+                                .font(.system(size: 25, weight: .light))
+                                .foregroundColor(Color(red: 60/255, green: 75/255, blue: 90/255))
                                 .padding(.bottom, 16)
                             
                             // 秒
                             VStack(spacing: 4) {
-                                Text("01")
+                                Text(String(format: "%02d", viewModel.remainingSeconds))
                                     .font(.system(size: 45, weight: .ultraLight))
                                     .foregroundColor(Color(red: 0.478, green: 0.827, blue: 0.792))
+                                    .shadow(
+                                                color: Color(red: 0.478, green: 0.827, blue: 0.792).opacity(0.8),
+                                                radius: isBreathing ? 10 : 3,  // ← 改成动态的
+                                                x: 0,
+                                                y: 0
+                                            )
+                                    .monospacedDigit()  // ← 添加这行
                                 Text("秒")
                                     .font(.system(size: 12, weight: .light))
                                     .foregroundColor(Color(red: 63/255, green: 72/255, blue: 88/255))
                             }
                         }
-                        .padding(.bottom, 20)
-                        
-                        Spacer()
                     }
-                    .frame(height: 200)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.red.opacity(0.2))
-                    
-                    // 2️⃣ 中间区域
-                    ScrollView {
-                        LifeGridView()
-                    }
-                    .background(Color.green.opacity(0.2))
-                    
-                    // 3️⃣ 底部区域
-                    VStack {
-                        Text("底部：进度条")
-                            .foregroundColor(.white)
-                    }
-                    .frame(height: 100)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue.opacity(0.2))
                     
                 }
+                .frame(height: 155)
+                .frame(maxWidth: .infinity)
+                
+              
+                // 2️⃣ 中间区域
+                VStack(spacing: 0) {
+                    // 固定的顶部间距（在 ScrollView 外面）
+                    Color.clear
+                        .frame(height: 11)
+                    
+                    // 可滚动的点阵
+                    ScrollView {
+                        LifeGridView(
+                            totalMonths: viewModel.totalMonths,
+                            currentMonth: viewModel.currentMonth
+                        )
+                        .padding(.top, 10)
+                        .padding(.bottom, 10)
+                    }
+                }
+                .frame(height: 558)
+                
+                // 3️⃣ 底部区域
+                VStack {
+                    Spacer()
+                    ProgressBarView(
+                        currentMonth: viewModel.currentMonth,
+                        totalMonths: viewModel.totalMonths
+                    )
+                    Spacer()
+                }
+                .frame(height: 53)
+                .frame(maxWidth: .infinity)
+            }
+            
+            // 弹窗
+            if showAboutAlert {
+                AboutAlertView(isPresented: $showAboutAlert)
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.2), value: showAboutAlert)
             }
         }
+        .onAppear {
+                   // 启动呼吸动画
+                   withAnimation(
+                    .easeInOut(duration: 1.5)
+                       .repeatForever(autoreverses: true)
+                   ) {
+                       isBreathing = true
+                   }
+               }
     }
 }
+
 #Preview {
-    MainView()
+    let birthDate = Calendar.current.date(byAdding: .year, value: -25, to: Date())!
+    let viewModel = MainViewModel(birthDate: birthDate, userLifespan: 80)
+    
+    return MainView(viewModel: viewModel)
+        .environmentObject(AppState())
 }

@@ -1,8 +1,14 @@
 import SwiftUI
 
-// 年龄输入页
 struct AgeInputView: View {
-    @State private var age: String = ""  // 存储用户输入的年龄
+    @EnvironmentObject var appState: AppState
+    @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
+    @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
+    @State private var selectedDay: Int = Calendar.current.component(.day, from: Date())
+    
+    let years = Array((1900...Calendar.current.component(.year, from: Date())).reversed())
+    let months = Array(1...12)
+    let days = Array(1...31)
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -11,58 +17,114 @@ struct AgeInputView: View {
             Color(red: 0.09, green: 0.13, blue: 0.20)
                 .ignoresSafeArea()
             
-            // 标题 "你现在的年龄"
-            Text("你现在的年龄")
-                .font(.system(size: 22, weight: .light))
-                .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
-                .offset(x: 135, y: 234)
+            // 标题
+            HStack {
+                Spacer()
+                Text("你的出生日期")
+                    .font(.system(size: 22, weight: .ultraLight))
+                    .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
+                Spacer()
+            }
+            .offset(x: 0, y: 234)
             
-            // 输入框（带 placeholder "age"）
-            TextField("age", text: $age)
-                .font(.system(size: 32, weight: .ultraLight))
-                .foregroundColor(.white)  // 输入的数字是白色
-                .multilineTextAlignment(.center)  // 居中对齐
-                .keyboardType(.numberPad)  // 数字键盘
-                .frame(width: 152, height: 40)
-                .background(Color.clear)  // 背景透明（和页面背景同色）
-                .offset(x: 120, y: 353)
-                // 自定义 placeholder 颜色和样式
-                .accentColor(.white)  // 光标颜色
-                .overlay(
-                    // 当输入框为空时，显示自定义的 placeholder
-                    Group {
-                        if age.isEmpty {
-                            Text("age")
-                                .font(.system(size: 32, weight: .ultraLight))
-                                .foregroundColor(Color(red: 0.34, green: 0.47, blue: 0.52))
-                                .offset(x: 120, y: 353)
-                                .allowsHitTesting(false)  // 不阻挡点击
+            // 自定义日期选择器
+            HStack {
+                Spacer()
+                
+                HStack(spacing: 0) {
+                    // 年份
+                    Picker("", selection: $selectedYear) {
+                        ForEach(years, id: \.self) { year in
+                            Text(verbatim: "\(year)年")  // ← 用 verbatim 强制原样输出
+                                .font(.system(size: 20))
+                                .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
+                                .multilineTextAlignment(.center)
                         }
                     }
-                )
+                    .pickerStyle(.wheel)
+                    .frame(width: 120)
+                    .clipped()
+
+
+                    
+                    // 月份
+                    Picker("", selection: $selectedMonth) {
+                        ForEach(months, id: \.self) { month in
+                            Text("\(month)月")
+                                .font(.system(size: 20))
+                                .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
+                                .multilineTextAlignment(.center)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .clipped()
+                    
+                    // 日期
+                    Picker("", selection: $selectedDay) {
+                        ForEach(days, id: \.self) { day in
+                            Text("\(day)日")
+                                .font(.system(size: 20))
+                                .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
+                                .multilineTextAlignment(.center)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(width: 80)
+                    .clipped()
+                }
+                .colorScheme(.dark)
+                .environment(\.locale, Locale(identifier: "en_US"))  // ← 添加这行
+                
+                Spacer()
+            }
+            .offset(x: 0, y: 300)
             
-            // 下划线（固定，始终显示）
-            Rectangle()
-                .fill(Color(red: 0.34, green: 0.47, blue: 0.52))
-                .frame(width: 152, height: 1)
-                .offset(x: 120, y: 404)
-            
-            // "岁" 文字
-            Text("岁")
-                .font(.system(size: 16, weight: .light))
-                .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
-                .offset(x: 286, y: 361)
-            
-            // 前进符号 "››"
-            Text("››")
-                .font(.system(size: 34, weight: .ultraLight))
-                .foregroundColor(Color(red: 0.34, green: 0.47, blue: 0.52))
-                .offset(x: 179, y: 467
-                )
+            // 前进按钮
+            HStack {
+                Spacer()
+                NavigationButton {
+                    // 保存生日
+                    if let date = createDate(year: selectedYear, month: selectedMonth, day: selectedDay) {
+                        appState.birthDate = date
+                    }
+                    appState.navigateToLifespanInput()
+                }
+                Spacer()
+            }
+            .offset(x: 0, y: 550)
         }
+        .onAppear {
+            // 恢复之前的选择
+            let components = Calendar.current.dateComponents([.year, .month, .day], from: appState.birthDate)
+            if let year = components.year, let month = components.month, let day = components.day {
+                selectedYear = year
+                selectedMonth = month
+                selectedDay = day
+            }
+        }
+    }
+    
+    // 创建日期
+    func createDate(year: Int, month: Int, day: Int) -> Date? {
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = min(day, daysInMonth(year: year, month: month))
+        return Calendar.current.date(from: components)
+    }
+    
+    // 计算该月有多少天
+    func daysInMonth(year: Int, month: Int) -> Int {
+        let dateComponents = DateComponents(year: year, month: month)
+        let calendar = Calendar.current
+        let date = calendar.date(from: dateComponents)!
+        let range = calendar.range(of: .day, in: .month, for: date)!
+        return range.count
     }
 }
 
 #Preview {
     AgeInputView()
+        .environmentObject(AppState())
 }

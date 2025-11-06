@@ -42,30 +42,42 @@ class MainViewModel: ObservableObject {
     }
     
     // 计算所有数据
-        func calculateAll() {
-            let calendar = Calendar.current
-            let now = Date()
-            
-            // 计算总月数
-            totalMonths = userLifespan * 12
-            
-            // 计算当前是第几个月（从出生到现在）
-            let components = calendar.dateComponents([.month], from: birthDate, to: now)
-            currentMonth = components.month ?? 0
-            
-            // 计算当前月的结束时间 = 生日 + (当前月数 + 1) 个月
-            let currentMonthEndDate = calendar.date(byAdding: .month, value: currentMonth + 1, to: birthDate) ?? Date()
-            
-            // 计算距离当前月结束的剩余时间
-            let remaining = calendar.dateComponents([.day, .hour, .minute, .second], from: now, to: currentMonthEndDate)
-            
-            remainingDays = max(0, remaining.day ?? 0)
-            remainingHours = max(0, remaining.hour ?? 0)
-            remainingMinutes = max(0, remaining.minute ?? 0)
-            remainingSeconds = max(0, remaining.second ?? 0)
-            
-            print("calculateAll 更新完成 - 当前月:\(currentMonth), 剩余秒数: \(remainingSeconds)")
-        }
+    func calculateAll() {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // 计算总月数
+        totalMonths = userLifespan * 12
+        
+        // 计算当前是第几个月（从出生到现在）
+        let components = calendar.dateComponents([.month], from: birthDate, to: now)
+        currentMonth = components.month ?? 0
+        
+        // 获取当前日期的年月
+        let nowComponents = calendar.dateComponents([.year, .month], from: now)
+        
+        // 构建下个月1日 00:00:00 的日期
+        var nextMonthComponents = DateComponents()
+        nextMonthComponents.year = nowComponents.year
+        nextMonthComponents.month = (nowComponents.month ?? 1) + 1
+        nextMonthComponents.day = 1
+        nextMonthComponents.hour = 0
+        nextMonthComponents.minute = 0
+        nextMonthComponents.second = 0
+        
+        // 计算当前自然月的结束时间（下个月1日 00:00:00）
+        let currentMonthEndDate = calendar.date(from: nextMonthComponents) ?? Date()
+        
+        // 计算距离当前月结束的剩余时间
+        let remaining = calendar.dateComponents([.day, .hour, .minute, .second], from: now, to: currentMonthEndDate)
+        
+        remainingDays = max(0, remaining.day ?? 0)
+        remainingHours = max(0, remaining.hour ?? 0)
+        remainingMinutes = max(0, remaining.minute ?? 0)
+        remainingSeconds = max(0, remaining.second ?? 0)
+        
+        print("calculateAll 更新完成 - 当前月:\(currentMonth), 剩余秒数: \(remainingSeconds)")
+    }
         
         // 启动定时器（每秒更新）
         func startTimer() {
@@ -91,7 +103,7 @@ class MainViewModel: ObservableObject {
     // 进度百分比
     var progress: Double {
         guard totalMonths > 0 else { return 0 }
-        return Double(currentMonth) / Double(totalMonths)
+        return Double(currentMonth + 1) / Double(totalMonths)
     }
     
     // 格式化的百分比文字
@@ -102,13 +114,13 @@ class MainViewModel: ObservableObject {
     
     // 格式化的分数文字
     var fractionText: String {
-        return "\(currentMonth)/\(totalMonths)"
+        return "\(currentMonth + 1)/\(totalMonths)"
     }
     
     // 格式化的标题文字
     var titleText: String {
         let remaining = totalMonths - currentMonth
-        return "第 \(currentMonth) 个月   剩余"
+        return "第 \(currentMonth + 1) 个月   剩余"
     }
     
     deinit {

@@ -26,19 +26,10 @@ struct MainView: View {
                         HStack(spacing: 12) {
                             
                             // Logo + 标题（可点击）
-                            HStack(spacing: 12) {
-                                Image("logo")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 50, height: 20)
-                                
-                                Text("Life Countdown")
-                                    .font(.system(size: 16, weight: .ultraLight))
-                                    .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
-                            }
-                            .onTapGesture {
-                                showAboutAlert = true
-                            }
+                            LogoView()
+                                .onTapGesture {
+                                    showAboutAlert = true
+                                }
                             
                             Spacer()
                             

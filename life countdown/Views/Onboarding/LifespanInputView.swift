@@ -6,46 +6,49 @@ struct LifespanInputView: View {
     @State private var lifespan: String = ""  // 存储用户输入的寿命
     
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            
+        ZStack {
             // 背景色
             Color(red: 0.09, green: 0.13, blue: 0.20)
                 .ignoresSafeArea()
             
-            // 标题（水平居中）
-            HStack {
+            VStack(spacing: 0) {
+                // 顶部空白
                 Spacer()
+                    .frame(height: 160)
+                
+                // 标题
                 Text("预期的生命长度")
                     .font(.system(size: 22, weight: .ultraLight))
                     .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
+                
                 Spacer()
-            }
-            .offset(x: 0, y: 234)
-            
-            // 输入框（水平居中）
-            HStack {
-                Spacer()
+                    .frame(height: 133)
+                
+                // 输入框
                 NumberInputField(
                     text: $lifespan,
                     placeholder: "age",
                     unit: "岁"
                 )
+                
                 Spacer()
-            }
-            .offset(x: 0, y: 353)  // 只控制垂直位置
-            
-            // 前进符号 "››"
-            HStack {
-                Spacer()
+                    .frame(height: 134)
+                
+                // 前进按钮
                 NavigationButton {
                     if let lifespanValue = Int(lifespan) {
                         appState.userLifespan = lifespanValue
                     }
                     appState.navigateToMain()
                 }
+                
+                // 弹性空白（自动填充）
                 Spacer()
+                
+                // Logo（在底部）
+                LogoView(scale: 0.74)
+                    .padding(.bottom, 28)
             }
-            .offset(x: 0, y: 467)
         }
         .onAppear {
             // 只在用户之前输入过值时才恢复

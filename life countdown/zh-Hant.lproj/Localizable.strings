@@ -1,0 +1,29 @@
+/* App Name */
+"app_name" = "life countdown";
+
+/* Splash View */
+"splash_title" = "life countdown";
+
+/* Age Input View */
+"age_input_title" = "你的出生年月";
+"year_unit" = "年";
+"month_unit" = "月";
+
+/* Lifespan Input View */
+"lifespan_input_title" = "預期的生命長度";
+"lifespan_placeholder" = "年齡";
+"lifespan_unit" = "歲";
+
+/* Main View */
+"main_title_format" = "第 %d 個月  剩餘";
+"time_unit_days" = "天";
+"time_unit_hours" = "時";
+"time_unit_minutes" = "分";
+"time_unit_seconds" = "秒";
+
+/* About Alert */
+"about_message" = "人生倒計時。\n每個月留下一個痕跡，亮起一個點。\n沒有暫停，沒有重來。\n但依舊還有未來。";
+"copyright" = "© 2025 algormula Pte. Ltd. All rights reserved.";
+"feedback_label" = "回饋";
+"feedback_placeholder" = "對我們的想法";
+"feedback_thanks" = "感謝反饋";

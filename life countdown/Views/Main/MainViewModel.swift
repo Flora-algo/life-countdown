@@ -120,7 +120,7 @@ class MainViewModel: ObservableObject {
     // 格式化的标题文字
     var titleText: String {
         let remaining = totalMonths - currentMonth
-        return "第 \(currentMonth + 1) 个月   剩余"
+        return String(format: "main_title_format".localized(), currentMonth + 1)
     }
     
     deinit {

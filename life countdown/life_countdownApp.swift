@@ -10,15 +10,19 @@ struct LifeCountdownApp: App {
             case .splash:
                 SplashView()
                     .environmentObject(appState)
-                
+
+            case .languageSelection:
+                LanguageSelectionView()
+                    .environmentObject(appState)
+
             case .ageInput:
                 AgeInputView()
                     .environmentObject(appState)
-                
+
             case .lifespanInput:
                 LifespanInputView()
                     .environmentObject(appState)
-                
+
             case .main:
                 // 从 AppState 获取 ViewModel
                 if let viewModel = appState.mainViewModel {

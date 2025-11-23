@@ -3,15 +3,30 @@ import SwiftUI
 struct LogoView: View {
     var scale: CGFloat = 1.0  // 默认为原始大小（100%）
     
+    // ✨ 新增：设备检测
+    private var isIPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+    
+    // ✨ 新增：缩放倍数
+    private var scaleFactor: CGFloat {
+        isIPad ? 1.8 : 1.0
+    }
+    
+    // ✨ 最终缩放：scale × scaleFactor
+    private var finalScale: CGFloat {
+        scale * scaleFactor
+    }
+    
     var body: some View {
-        HStack(spacing: 12 * scale) {  // 间距也按比例缩放
+        HStack(spacing: 12 * finalScale) {  // ← 使用 finalScale
             Image("logo")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 50 * scale, height: 20 * scale)
+                .frame(width: 50 * finalScale, height: 20 * finalScale)  // ← 使用 finalScale
             
             Text("Life Countdown")
-                .font(.system(size: 16 * scale, weight: .ultraLight))
+                .font(.system(size: 16 * finalScale, weight: .ultraLight))  // ← 使用 finalScale
                 .foregroundColor(Color(red: 0.44, green: 0.75, blue: 0.75))
         }
     }

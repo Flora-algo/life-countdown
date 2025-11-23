@@ -1,0 +1,29 @@
+/* App Name */
+"app_name" = "life countdown";
+
+/* Splash View */
+"splash_title" = "life countdown";
+
+/* Age Input View */
+"age_input_title" = "Your Birth Date";
+"year_unit" = "Year";
+"month_unit" = "Month";
+
+/* Lifespan Input View */
+"lifespan_input_title" = "Expected Lifespan";
+"lifespan_placeholder" = "age";
+"lifespan_unit" = "years";
+
+/* Main View */
+"main_title_format" = "Month %d  Remaining";
+"time_unit_days" = "Days";
+"time_unit_hours" = "Hrs";
+"time_unit_minutes" = "Mins";
+"time_unit_seconds" = "Secs";
+
+/* About Alert */
+"about_message" = "A lifetime, counting down.\nEach month marks a dot.\nNo pause. No redo.\nBut the future is still yours.";
+"copyright" = "© 2025 algormula Pte. Ltd. All rights reserved.";
+"feedback_label" = "feedback";
+"feedback_placeholder" = "Your thoughts...";
+"feedback_thanks" = "Thank you for your feedback";

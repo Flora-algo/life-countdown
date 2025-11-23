@@ -5,12 +5,22 @@ struct LifeGridView: View {
     let currentMonth: Int
     let dotsPerRow = 24
     
+    // ✨ 新增：设备检测
+    private var isIPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+    
+    // ✨ 新增：缩放倍数
+    private var scaleFactor: CGFloat {
+        isIPad ? 1.8 : 1.0
+    }
+    
     var body: some View {
         GeometryReader { geometry in
-            let availableWidth = min(geometry.size.width * 0.85, 450)  // 屏幕宽度的 90%，最大 450  // 最大 450
-            let calculatedSpacing = (availableWidth - CGFloat(dotsPerRow) * 5) / CGFloat(dotsPerRow - 1)
-            let spacing = max(calculatedSpacing, 9)  // 最小 9
-            let dotSize: CGFloat = 5
+            let availableWidth = min(geometry.size.width * 0.85, 450)
+            let calculatedSpacing = (availableWidth - CGFloat(dotsPerRow) * (5 * scaleFactor)) / CGFloat(dotsPerRow - 1)  // ← 修改这里
+            let spacing = max(calculatedSpacing, 9 * scaleFactor)  // ← 修改这里
+            let dotSize: CGFloat = 5 * scaleFactor  // ← 修改这里
             
             HStack {
                 Spacer()

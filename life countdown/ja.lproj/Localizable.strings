@@ -1,0 +1,29 @@
+/* App Name */
+"app_name" = "life countdown";
+
+/* Splash View */
+"splash_title" = "life countdown";
+
+/* Age Input View */
+"age_input_title" = "あなたの誕生年月";
+"year_unit" = "年";
+"month_unit" = "月";
+
+/* Lifespan Input View */
+"lifespan_input_title" = "期待寿命";
+"lifespan_placeholder" = "年齢";
+"lifespan_unit" = "歳";
+
+/* Main View */
+"main_title_format" = "第 %d ヶ月  残り";
+"time_unit_days" = "日";
+"time_unit_hours" = "時間";
+"time_unit_minutes" = "分";
+"time_unit_seconds" = "秒";
+
+/* About Alert */
+"about_message" = "人生、カウントダウン中。\nひと月ごとに痕跡を残し、点を灯す。\n停止も、やり直しもできない。\nだが、未来はまだある。";
+"copyright" = "© 2025 algormula Pte. Ltd. All rights reserved.";
+"feedback_label" = "フィードバック";
+"feedback_placeholder" = "ご意見をお聞かせください";
+"feedback_thanks" = "フィードバックありがとうございます";

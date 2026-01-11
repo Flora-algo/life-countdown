@@ -77,7 +77,7 @@ struct AboutAlertView: View {
                     // 底部：版本号和版权信息
                     VStack(alignment: .trailing, spacing: 2 * scaleFactor) {  // ← spacing 缩放
                         // 版本号
-                        Text("v1.0.1")
+                        Text("v1.2.1")
                             .font(.system(size: 12 * scaleFactor))  // ← 字体缩放
                             .foregroundColor(Color(red: 0x5A/255.0, green: 0x69/255.0, blue: 0x79/255.0))
                         

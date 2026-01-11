@@ -13,6 +13,7 @@
 "lifespan_input_title" = "Expected Lifespan";
 "lifespan_placeholder" = "age";
 "lifespan_unit" = "years";
+"should_not_less_than_current_age" = "Should not be less than current age";
 
 /* Main View */
 "main_title_format" = "Month %d  Remaining";

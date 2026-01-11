@@ -13,6 +13,7 @@
 "lifespan_input_title" = "期待寿命";
 "lifespan_placeholder" = "年齢";
 "lifespan_unit" = "歳";
+"should_not_less_than_current_age" = "現在の年齢より小さくすることはできません";
 
 /* Main View */
 "main_title_format" = "第 %d ヶ月  残り";

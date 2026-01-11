@@ -3,7 +3,8 @@ import SwiftUI
 struct LanguageSelectionView: View {
     @EnvironmentObject var appState: AppState
     @ObservedObject var languageManager = LanguageManager.shared
-    @State private var selectedLanguage: AppLanguage = LanguageManager.shared.currentLanguage
+    @State private var selectedLanguage: AppLanguage?
+    @State private var showButton: Bool = false
 
     // 设备检测
     private var isIPad: Bool {
@@ -46,6 +47,11 @@ struct LanguageSelectionView: View {
                             scaleFactor: scaleFactor
                         ) {
                             selectedLanguage = .english
+                            if !appState.isEditingFromMain && !showButton {
+                                withAnimation(.easeIn(duration: 0.5)) {
+                                    showButton = true
+                                }
+                            }
                         }
 
                         // 繁體中文
@@ -55,6 +61,11 @@ struct LanguageSelectionView: View {
                             scaleFactor: scaleFactor
                         ) {
                             selectedLanguage = .traditionalChinese
+                            if !appState.isEditingFromMain && !showButton {
+                                withAnimation(.easeIn(duration: 0.5)) {
+                                    showButton = true
+                                }
+                            }
                         }
 
                         // 日本語
@@ -64,6 +75,11 @@ struct LanguageSelectionView: View {
                             scaleFactor: scaleFactor
                         ) {
                             selectedLanguage = .japanese
+                            if !appState.isEditingFromMain && !showButton {
+                                withAnimation(.easeIn(duration: 0.5)) {
+                                    showButton = true
+                                }
+                            }
                         }
                     }
 
@@ -72,11 +88,16 @@ struct LanguageSelectionView: View {
                         .frame(height: 65 * scaleFactor)
 
                     // 前进按钮
-                    NavigationButton {
-                        // 保存选择的语言
-                        languageManager.setLanguage(selectedLanguage)
-                        // 跳转到出生日期输入
-                        appState.navigateToAgeInputFromLanguageSelection()
+                    if showButton {
+                        NavigationButton {
+                            // 保存选择的语言
+                            if let language = selectedLanguage {
+                                languageManager.setLanguage(language)
+                            }
+                            // 跳转到出生日期输入
+                            appState.navigateToAgeInputFromLanguageSelection()
+                        }
+                        .opacity(showButton ? 1 : 0)
                     }
 
                     // 弹性空白
@@ -115,6 +136,14 @@ struct LanguageSelectionView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            // 从 MainView 进入时，显示当前语言和按钮
+            if appState.isEditingFromMain {
+                selectedLanguage = languageManager.currentLanguage
+                showButton = true
+            }
+            // 从 SplashView 进入时，不选中任何语言，不显示按钮
         }
     }
 }

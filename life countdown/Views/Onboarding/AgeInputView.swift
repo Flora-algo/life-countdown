@@ -2,11 +2,21 @@ import SwiftUI
 
 struct AgeInputView: View {
     @EnvironmentObject var appState: AppState
+    @ObservedObject var languageManager = LanguageManager.shared
     @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
     @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
-    
+
     let years = Array((1900...Calendar.current.component(.year, from: Date())).reversed())
     let months = Array(1...12)
+
+    // 英文月份缩写（标准格式）
+    let monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.",
+                      "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
+
+    // 检测是否为英文
+    private var isEnglish: Bool {
+        languageManager.currentLanguage == .english
+    }
     
     // 设备检测
     private var isIPad: Bool {
@@ -60,31 +70,59 @@ struct AgeInputView: View {
                     
                     // 自定义日期选择器
                     HStack(spacing: 0) {
-                        // 年份
-                        Picker("", selection: $selectedYear) {
-                            ForEach(years, id: \.self) { year in
-                                Text(verbatim: "\(year)")
-                                    .font(.system(size: pickerFontSize))
-                                    .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
-                                    .multilineTextAlignment(.center)
+                        if isEnglish {
+                            // 英文模式：月份在前
+                            Picker("", selection: $selectedMonth) {
+                                ForEach(months, id: \.self) { month in
+                                    Text(verbatim: monthNames[month - 1])
+                                        .font(.system(size: pickerFontSize))
+                                        .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
+                                        .multilineTextAlignment(.center)
+                                }
                             }
-                        }
-                        .pickerStyle(.wheel)
-                        .frame(width: 120 * scaleFactor)
-                        .clipped()
+                            .pickerStyle(.wheel)
+                            .frame(width: 100 * scaleFactor)
+                            .clipped()
 
-                        // 月份
-                        Picker("", selection: $selectedMonth) {
-                            ForEach(months, id: \.self) { month in
-                                Text(verbatim: "\(month)")
-                                    .font(.system(size: pickerFontSize))
-                                    .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
-                                    .multilineTextAlignment(.center)
+                            // 年份在后
+                            Picker("", selection: $selectedYear) {
+                                ForEach(years, id: \.self) { year in
+                                    Text(verbatim: "\(year)")
+                                        .font(.system(size: pickerFontSize))
+                                        .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
+                                        .multilineTextAlignment(.center)
+                                }
                             }
+                            .pickerStyle(.wheel)
+                            .frame(width: 120 * scaleFactor)
+                            .clipped()
+                        } else {
+                            // 中文/日文模式：年份在前
+                            Picker("", selection: $selectedYear) {
+                                ForEach(years, id: \.self) { year in
+                                    Text(verbatim: "\(year)")
+                                        .font(.system(size: pickerFontSize))
+                                        .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
+                                        .multilineTextAlignment(.center)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            .frame(width: 120 * scaleFactor)
+                            .clipped()
+
+                            // 月份在后（数字）
+                            Picker("", selection: $selectedMonth) {
+                                ForEach(months, id: \.self) { month in
+                                    Text(verbatim: "\(month)")
+                                        .font(.system(size: pickerFontSize))
+                                        .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
+                                        .multilineTextAlignment(.center)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            .frame(width: 80 * scaleFactor)
+                            .clipped()
                         }
-                        .pickerStyle(.wheel)
-                        .frame(width: 80 * scaleFactor)
-                        .clipped()
                     }
                     
                     // ✨ Picker 到按钮的间距（屏幕高度的 7%）
@@ -109,26 +147,24 @@ struct AgeInputView: View {
                 .colorScheme(.dark)
                 .environment(\.locale, Locale(identifier: "en_US"))
                 
-                // 返回按钮（浮动）
-                if appState.isEditingFromMain {
-                    VStack {
-                        HStack {
-                            Button(action: {
-                                appState.cancelEditingAndReturnToMain()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 20 * scaleFactor))
-                                    .foregroundColor(Color(red: 50/255, green: 65/255, blue: 80/255))
-                                    .padding(12 * scaleFactor)
-                            }
-                            
-                            Spacer()
+                // 返回按钮（始终显示）
+                VStack {
+                    HStack {
+                        Button(action: {
+                            appState.navigateBackToLanguageSelection()
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 20 * scaleFactor))
+                                .foregroundColor(Color(red: 50/255, green: 65/255, blue: 80/255))
+                                .padding(12 * scaleFactor)
                         }
-                        .padding(.leading, 8 * scaleFactor)
-                        .padding(.top, 10 * scaleFactor)
-                        
+
                         Spacer()
                     }
+                    .padding(.leading, 8 * scaleFactor)
+                    .padding(.top, 10 * scaleFactor)
+
+                    Spacer()
                 }
             }
         }

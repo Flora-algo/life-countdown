@@ -32,7 +32,13 @@ struct NumberInputField: View {
                     .multilineTextAlignment(.center)
                     .keyboardType(.numberPad)
                     .accentColor(Color(red: 55/255.0, green: 85/255.0, blue: 110/255.0))
-                    .focused($isFocused)  // ← 添加这行
+                    .focused($isFocused)
+                    .onChange(of: text) { newValue in
+                        // 限制最多2位数字
+                        if newValue.count > 2 {
+                            text = String(newValue.prefix(2))
+                        }
+                    }
             }
             .frame(width: 152, height: 40)
             .offset(y: -20)

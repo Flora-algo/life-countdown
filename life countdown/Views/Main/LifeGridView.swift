@@ -70,9 +70,8 @@ struct DotView: View {
     let totalRows: Int
     let dotSize: CGFloat
     let spacing: CGFloat
-    
+
     @State private var isBreathing = false
-    
     var body: some View {
         Circle()
             .fill(index == currentMonth ? Color.clear : dotColor)

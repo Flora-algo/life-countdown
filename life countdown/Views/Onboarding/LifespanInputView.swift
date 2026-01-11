@@ -4,12 +4,12 @@ struct LifespanInputView: View {
     @EnvironmentObject var appState: AppState
     @ObservedObject var languageManager = LanguageManager.shared
     @State private var lifespan: String = ""
-    
+
     // 设备检测
     private var isIPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
     }
-    
+
     // ✨ 改进：动态缩放倍数（和 AgeInputView 一致）
     private var scaleFactor: CGFloat {
         if isIPad {
@@ -22,6 +22,22 @@ struct LifespanInputView: View {
         } else {
             return 1.0  // iPhone
         }
+    }
+
+    // 计算当前年龄
+    private var currentAge: Int {
+        let calendar = Calendar.current
+        let now = Date()
+        let ageComponents = calendar.dateComponents([.year], from: appState.birthDate, to: now)
+        return ageComponents.year ?? 0
+    }
+
+    // 检查是否有错误（输入的寿命小于当前年龄）
+    private var showError: Bool {
+        guard let lifespanValue = Int(lifespan), !lifespan.isEmpty else {
+            return false
+        }
+        return lifespanValue < currentAge
     }
     
     var body: some View {
@@ -47,12 +63,22 @@ struct LifespanInputView: View {
                         .frame(height: geometry.size.height * 0.07)
                     
                     // 输入框（占据中间位置，和 Picker 高度类似）
-                    NumberInputField(
-                        text: $lifespan,
-                        placeholder: "lifespan_placeholder".localized(),
-                        unit: "lifespan_unit".localized()
-                    )
-                    .scaleEffect(scaleFactor)
+                    VStack(spacing: 0) {
+                        NumberInputField(
+                            text: $lifespan,
+                            placeholder: "lifespan_placeholder".localized(),
+                            unit: "lifespan_unit".localized()
+                        )
+                        .scaleEffect(scaleFactor)
+
+                        // 错误提示（在下划线下方）
+                        if showError {
+                            Text("should_not_less_than_current_age".localized())
+                                .font(.system(size: 10 * scaleFactor))
+                                .foregroundColor(Color(red: 82/255, green: 100/255, blue: 126/255))
+                                .padding(.top, 8 * scaleFactor)
+                        }
+                    }
                     .frame(height: 150 * scaleFactor)  // ✨ 给一个固定高度，让视觉上和 Picker 对齐
                     
                     // ✨ 输入框到按钮的间距（屏幕高度的 7% - 和 AgeInputView 一致）
@@ -66,6 +92,7 @@ struct LifespanInputView: View {
                         }
                         appState.navigateToMain()
                     }
+                    .disabled(showError || lifespan.isEmpty)
                     
                     // 弹性空白（自动填充剩余空间）
                     Spacer()

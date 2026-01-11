@@ -13,6 +13,7 @@
 "lifespan_input_title" = "預期的生命長度";
 "lifespan_placeholder" = "年齡";
 "lifespan_unit" = "歲";
+"should_not_less_than_current_age" = "不應小於當前年齡";
 
 /* Main View */
 "main_title_format" = "第 %d 個月  剩餘";

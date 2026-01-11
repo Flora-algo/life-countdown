@@ -149,7 +149,11 @@ class AppState: ObservableObject {
     func navigateBackToAgeInput() {
         currentScreen = .ageInput
     }
-    
+
+    func navigateBackToLanguageSelection() {
+        currentScreen = .languageSelection
+    }
+
     // ✨ 修改：取消编辑，返回主页面
     func cancelEditingAndReturnToMain() {
         // 重新加载原来的数据（取消修改）
